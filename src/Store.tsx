@@ -5,7 +5,7 @@ class QueryParamsStore {
 
   constructor() {
     makeAutoObservable(this, {
-      params: observable,
+      params: observable.shallow,
       setParam: action,
       updateFromUrl: action,
     });
@@ -47,6 +47,21 @@ class QueryParamsStore {
   // Get a specific query parameter
   getParam(key: string): string | undefined {
     return this.params.get(key);
+  }
+
+  mergeParams(params: Record<string, string>) {
+    Object.entries(params).forEach(([key, value]) => {
+      this.params.set(key, value);
+    });
+    this.updateUrl();
+  }
+
+  setParams(newParams: Record<string, string>) {
+    this.params.clear();
+    Object.entries(newParams).forEach(([key, value]) => {
+      this.params.set(key, value);
+    });
+    this.updateUrl();
   }
 }
 
